@@ -9,4 +9,6 @@
 
     <string name="visitas_contain">Visitas</string>
     <string name="action_settings">Settings</string>
+    <string name="principal_buton_cambio">Cambio Usuario</string>
+    <string name="principal_buton_Inicio">Iniciar Sesion</string>
 </resources>

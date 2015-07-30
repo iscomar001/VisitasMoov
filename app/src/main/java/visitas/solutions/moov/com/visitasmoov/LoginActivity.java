@@ -29,7 +29,6 @@ import com.omr.solutions.utils.task.OnTaskCompleted;
 import java.util.ArrayList;
 import java.util.List;
 
-import visitas.solutions.moov.com.visitasmoov.dao.SeguridadTO;
 import visitas.solutions.moov.com.visitasmoov.tasks.UserLoginTask;
 
 
@@ -39,19 +38,6 @@ import visitas.solutions.moov.com.visitasmoov.tasks.UserLoginTask;
 public class LoginActivity extends Activity implements LoaderCallbacks<Cursor>, OnTaskCompleted {
 
     public static final String TAG_ORIGEN_LOGIN = "tagOrigenLogin";
-
-
-    /**
-     * A dummy authentication store containing known user names and passwords.
-     * TODO: remove after connecting to a real authentication system.
-     */
-    private static final String[] DUMMY_CREDENTIALS = new String[]{
-            "foo@example.com:hello", "bar@example.com:world"
-    };
-    /**
-     * Keep track of the login task to ensure we can cancel it if requested.
-     */
-    private UserLoginTask mAuthTask = null;
 
     // UI references.
     private AutoCompleteTextView mEmailView;
@@ -103,9 +89,6 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor>, 
      * errors are presented and no actual login attempt is made.
      */
     public void attemptLogin() {
-        if (mAuthTask != null) {
-            return;
-        }
 
         // Reset errors.
         mEmailView.setError(null);
@@ -144,8 +127,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor>, 
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            mAuthTask = new UserLoginTask(this.getApplicationContext(),this,TAG_ORIGEN_LOGIN,email, password);
-            mAuthTask.execute((Void) null);
+            new UserLoginTask(this.getApplicationContext(),this,TAG_ORIGEN_LOGIN,email, password).execute((Void) null);
         }
     }
 
@@ -234,7 +216,6 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor>, 
 
         if (tagOrigen.equalsIgnoreCase(TAG_ORIGEN_LOGIN)){
 
-            SeguridadTO seguridadTO = (SeguridadTO)object;
             Boolean success = (Boolean)object;
 
             showProgress(false);
@@ -243,7 +224,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor>, 
                 Intent intent =  new Intent(getApplicationContext(),VisitasActivity.class);
 
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.putExtra(PrincipalActivity.PRINCIPAL_ID_USUARIO,seguridadTO.getId());
+                intent.putExtra(PrincipalActivity.PRINCIPAL_USUARIO, mEmailView.getText().toString());
 
 
                 getApplicationContext().startActivity(intent);

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.omr.solutions.utils.task.OnTaskCompleted;
@@ -24,10 +25,12 @@ public class PrincipalActivity extends Activity implements OnTaskCompleted {
     public static String TAG_ORIGEN_EXISTE_USUARIO = "ExisteUsuarioTask";
     public static final int DB_VERSION = 1;
     public static final String DB_NAME = "visitasmoov.db";
-    public static final String PRINCIPAL_ID_USUARIO = "ID_USUARIO";
+    public static final String PRINCIPAL_USUARIO = "USUARIO";
 
 
     public TextView userText;
+    public Button btnCambio;
+    public Button btnLogin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,32 +42,20 @@ public class PrincipalActivity extends Activity implements OnTaskCompleted {
 
         userText = (TextView)findViewById(R.id.principal_user_textview);
 
-        Log.d(LOG_TAG,"onCreate");
+        btnCambio = (Button)findViewById(R.id.principal_btn_cambio);
+        btnLogin = (Button)findViewById(R.id.principal_btn_login);
 
-
-    }
-
-    @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-        Log.d(LOG_TAG, "onPostCreate");
-    }
-
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        Log.d(LOG_TAG, "onStart");
+        Log.d(LOG_TAG, "onCreate");
 
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        Log.d(LOG_TAG, "onResume");
-
-        new ExisteUsuarioTask(getApplicationContext(),this,TAG_ORIGEN_EXISTE_USUARIO).execute();
+    protected void onPostResume() {
+        super.onPostResume();
+        Log.d(LOG_TAG, "onPostResume");
+        new ExisteUsuarioTask(getApplicationContext(), this, TAG_ORIGEN_EXISTE_USUARIO).execute();
     }
+
 
     @Override
     public void onTaskCompleted(String tagOrigen,Object object) {
@@ -74,34 +65,16 @@ public class PrincipalActivity extends Activity implements OnTaskCompleted {
 
             SeguridadTO seguridadTO = (SeguridadTO) object;
 
-            Log.d(LOG_TAG, "onPostExecute");
+            btnCambio.setVisibility(View.VISIBLE);
 
             if ( seguridadTO.getId() == -1){
-
-                Log.d(LOG_TAG,"User No Found");
-
+                Log.d(LOG_TAG, "User No Found");
                 userText.setText(seguridadTO.getUsuario());
-
-                Intent intent =  new Intent(getApplicationContext(),LoginActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.putExtra(PrincipalActivity.PRINCIPAL_ID_USUARIO,0);
-
-
-                getApplicationContext().startActivity(intent);
-
             }else{
-
-                Log.d(LOG_TAG,"User found: " + seguridadTO.getUsuario());
-
-                userText.setText("NUEVO");
-
-                Intent intent =  new Intent(getApplicationContext(),VisitasActivity.class);
-
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.putExtra(PrincipalActivity.PRINCIPAL_ID_USUARIO,seguridadTO.getId());
-
-
-                getApplicationContext().startActivity(intent);
+                Log.d(LOG_TAG, "User found: " + seguridadTO.getUsuario());
+                userText.setText(seguridadTO.getUsuario());
+                btnCambio.setVisibility(View.VISIBLE);
+                btnLogin.setVisibility(View.VISIBLE);
             }
         }
 
@@ -110,6 +83,27 @@ public class PrincipalActivity extends Activity implements OnTaskCompleted {
     @Override
     public void onTaskCanceled(String tagOrigen) {
 
+    }
+
+    public void btnCambioOnClick(View view) {
+
+        Intent intent =  new Intent(getApplicationContext(),LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra(PrincipalActivity.PRINCIPAL_USUARIO,"ND");
+
+
+        getApplicationContext().startActivity(intent);
+    }
+
+    public void btnLoginOnClick(View view) {
+
+        Intent intent =  new Intent(getApplicationContext(),VisitasActivity.class);
+
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra(PrincipalActivity.PRINCIPAL_USUARIO,userText.getText().toString());
+
+
+        getApplicationContext().startActivity(intent);
     }
 }
 

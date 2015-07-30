@@ -50,6 +50,9 @@ public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
 
             if(seguridadTO == null){
 
+                tableDAO.deleteAll();
+
+
                 SeguridadTO seguridadNewTO = new SeguridadTO();
                 seguridadNewTO.setUsuario(usuario);
                 seguridadNewTO.setPassword(password);

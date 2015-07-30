@@ -37,12 +37,6 @@ public class ExisteUsuarioTask extends AsyncTask<Void,Void,SeguridadTO>  {
 
         Log.d(LOG_TAG,"doInBackground");
 
-        try {
-            Thread.sleep(4000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
         SeguridadTO seguridadTO = new SeguridadTO();
 
         List<SeguridadTO> listSeguridad = new ArrayList<>();

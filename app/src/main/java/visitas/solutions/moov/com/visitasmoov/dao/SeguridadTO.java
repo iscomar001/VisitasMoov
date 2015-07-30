@@ -10,18 +10,28 @@ import com.omr.solutions.utils.sqllite.TableType;
 public class SeguridadTO extends Table {
 
     @TableType(tableName="tblUsuarios")
+    private String tableName;
     @ColType(colName = "id", acceptNull = false,descriptionName = "ID" , isAutoIncrement = true,isPrimary = true, colType = SQL_TYPE_INTEGER)
-    private int id = -1;
+    private Integer id = -1;
     @ColType(colName = "usuario", acceptNull = false,descriptionName = "USUARIO" , colType = SQL_TYPE_TEXT)
     private String usuario;
     @ColType(colName = "password", acceptNull = false,descriptionName = "PASSWORD" , colType = SQL_TYPE_TEXT)
     private String password;
 
-    public int getId() {
+
+    public String getTableName() {
+        return tableName;
+    }
+
+    public void setTableName(String tableName) {
+        this.tableName = tableName;
+    }
+
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

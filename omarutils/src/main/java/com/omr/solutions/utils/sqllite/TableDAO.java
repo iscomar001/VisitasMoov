@@ -61,6 +61,7 @@ public class TableDAO<T> extends SQLiteOpenHelper implements Constantes{
             	
             	if (colType.isPrimary()) {
 					fieldIdentifier = field;
+					listFields.add(field);
 				} else {
 					listFields.add(field);
 				}
@@ -302,6 +303,20 @@ public class TableDAO<T> extends SQLiteOpenHelper implements Constantes{
 			}
 		}
 	}
+
+	public void deleteAll() throws SQLUtilsException{
+		SQLiteDatabase db = null;
+		try {
+			db = this.getWritableDatabase();
+			db.delete(tableName, null, null);
+		}catch (Exception e) {
+			throw new SQLUtilsException(e);
+		}finally{
+			if (db != null) {
+				db.close();
+			}
+		}
+	}
 	
 	public int updateBean(T t) throws SQLUtilsException{
 		Map<String,String> whereMap = new HashMap<String, String>();
@@ -335,7 +350,7 @@ public class TableDAO<T> extends SQLiteOpenHelper implements Constantes{
 			}
 		}
 	}
-	
+
 	// Getting contacts Count
     public int getCount() throws SQLUtilsException {
     	SQLiteDatabase db = null;
@@ -407,21 +422,25 @@ public class TableDAO<T> extends SQLiteOpenHelper implements Constantes{
 		ContentValues contentValues =  new ContentValues();
 		try {
 			for (Field field : listFields) {
-				if (field.getType() == String.class) {
+				ColType colType = field.getAnnotation(ColType.class);
+				if (!colType.isPrimary()){
+					if (field.getType() == String.class) {
 						contentValues.put(field.getName(), (String) field.get(t));
+					}
+					if (field.getType() == Integer.class) {
+						contentValues.put(field.getName(), (Integer) field.get(t));
+					}
+					if (field.getType() == Double.class) {
+						contentValues.put(field.getName(), (Double) field.get(t));
+					}
+					if (field.getType() == Float.class) {
+						contentValues.put(field.getName(), (Float) field.get(t));
+					}
+					if (field.getType() == Long.class) {
+						contentValues.put(field.getName(), (Long) field.get(t));
+					}
 				}
-				if (field.getType() == Integer.class) {
-					contentValues.put(field.getName(), (Integer) field.get(t));
-				}
-				if (field.getType() == Double.class) {
-					contentValues.put(field.getName(), (Double) field.get(t));
-				}
-				if (field.getType() == Float.class) {
-					contentValues.put(field.getName(), (Float) field.get(t));
-				}
-				if (field.getType() == Long.class) {
-					contentValues.put(field.getName(), (Long) field.get(t));
-				}
+
 			}
 		} catch (IllegalArgumentException e) {
 			throw new SQLUtilsException(e);
