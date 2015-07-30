@@ -11,7 +11,7 @@ public class SeguridadTO extends Table {
 
     @TableType(tableName="tblUsuarios")
     @ColType(colName = "id", acceptNull = false,descriptionName = "ID" , isAutoIncrement = true,isPrimary = true, colType = SQL_TYPE_INTEGER)
-    private int id;
+    private int id = -1;
     @ColType(colName = "usuario", acceptNull = false,descriptionName = "USUARIO" , colType = SQL_TYPE_TEXT)
     private String usuario;
     @ColType(colName = "password", acceptNull = false,descriptionName = "PASSWORD" , colType = SQL_TYPE_TEXT)
