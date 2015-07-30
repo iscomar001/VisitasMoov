@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">VisitasMoov</string>
+
+    <string name="title_activity_principal">PrincipalActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="principal_welcome">VISITAS MOOV</string>
+    <string name="principal_usuario">BIENVENIDO</string>
+    <string name="title_activity_visitas">VisitasActivity</string>
+
+    <string name="visitas_contain">Visitas</string>
+    <string name="action_settings">Settings</string>
+</resources>
