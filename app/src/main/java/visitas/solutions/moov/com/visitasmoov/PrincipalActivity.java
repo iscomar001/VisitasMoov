@@ -50,13 +50,14 @@ public class PrincipalActivity extends Activity {
 
         userText = (TextView)findViewById(R.id.principal_user_textview);
 
-        new ExisteUsuario(getApplicationContext(),userText).execute();
+
 
     }
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
+        new ExisteUsuario(getApplicationContext(),userText).execute();
     }
 
 
