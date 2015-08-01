@@ -21,8 +21,8 @@ import visitas.solutions.moov.com.visitasmoov.tasks.ExisteUsuarioTask;
  */
 public class PrincipalActivity extends Activity implements OnTaskCompleted {
 
-    public static String LOG_TAG = PrincipalActivity.class.getSimpleName();
-    public static String TAG_ORIGEN_EXISTE_USUARIO = "ExisteUsuarioTask";
+    public static final String TAG = PrincipalActivity.class.getSimpleName();
+    public static final String TAG_ORIGEN_EXISTE_USUARIO = "ExisteUsuarioTask";
     public static final int DB_VERSION = 1;
     public static final String DB_NAME = "visitasmoov.db";
     public static final String PRINCIPAL_USUARIO = "USUARIO";
@@ -35,24 +35,18 @@ public class PrincipalActivity extends Activity implements OnTaskCompleted {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_principal);
-
         final View contentView = findViewById(R.id.fullscreen_content);
-
+        
         userText = (TextView)findViewById(R.id.principal_user_textview);
-
         btnCambio = (Button)findViewById(R.id.principal_btn_cambio);
         btnLogin = (Button)findViewById(R.id.principal_btn_login);
-
-        Log.d(LOG_TAG, "onCreate");
-
     }
 
     @Override
     protected void onPostResume() {
         super.onPostResume();
-        Log.d(LOG_TAG, "onPostResume");
+        Log.d(TAG, "onPostResume: start ExisteUsuario: " + TAG_ORIGEN_EXISTE_USUARIO);
         new ExisteUsuarioTask(getApplicationContext(), this, TAG_ORIGEN_EXISTE_USUARIO).execute();
     }
 
@@ -60,6 +54,7 @@ public class PrincipalActivity extends Activity implements OnTaskCompleted {
     @Override
     public void onTaskCompleted(String tagOrigen,Object object) {
 
+        Log.d(TAG, "onTaskCompleted " + tagOrigen);
 
         if (tagOrigen.equalsIgnoreCase(TAG_ORIGEN_EXISTE_USUARIO)){
 
@@ -68,10 +63,10 @@ public class PrincipalActivity extends Activity implements OnTaskCompleted {
             btnCambio.setVisibility(View.VISIBLE);
 
             if ( seguridadTO.getId() == -1){
-                Log.d(LOG_TAG, "User No Found");
+                Log.d(TAG, "User No Found");
                 userText.setText(seguridadTO.getUsuario());
             }else{
-                Log.d(LOG_TAG, "User found: " + seguridadTO.getUsuario());
+                Log.d(TAG, "User found: " + seguridadTO.getUsuario());
                 userText.setText(seguridadTO.getUsuario());
                 btnCambio.setVisibility(View.VISIBLE);
                 btnLogin.setVisibility(View.VISIBLE);
@@ -85,26 +80,23 @@ public class PrincipalActivity extends Activity implements OnTaskCompleted {
 
     }
 
-    public void btnCambioOnClick(View view) {
+    public void btnOnClick(View view) {
+        if (view == btnCambio) {
+            Log.d(TAG, "btnCambioOnClick");
+            Intent intent =  new Intent(getApplicationContext(),LoginActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.putExtra(PrincipalActivity.PRINCIPAL_USUARIO,"ND");
+            getApplicationContext().startActivity(intent);
+        }else {
+            Log.d(TAG, "btnLoginOnClick ");
+            Intent intent =  new Intent(getApplicationContext(),VisitasActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.putExtra(PrincipalActivity.PRINCIPAL_USUARIO,userText.getText().toString());
+            getApplicationContext().startActivity(intent);
+        }
 
-        Intent intent =  new Intent(getApplicationContext(),LoginActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.putExtra(PrincipalActivity.PRINCIPAL_USUARIO,"ND");
-
-
-        getApplicationContext().startActivity(intent);
     }
 
-    public void btnLoginOnClick(View view) {
-
-        Intent intent =  new Intent(getApplicationContext(),VisitasActivity.class);
-
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.putExtra(PrincipalActivity.PRINCIPAL_USUARIO,userText.getText().toString());
-
-
-        getApplicationContext().startActivity(intent);
-    }
 }
 
 

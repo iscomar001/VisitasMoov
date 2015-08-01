@@ -52,7 +52,7 @@ public class ExisteUsuarioTask extends AsyncTask<Void,Void,SeguridadTO>  {
 
 
         } catch (SQLUtilsException e) {
-            Log.d(PrincipalActivity.LOG_TAG, "ERROR EXISTE USUARIO " + e.getMessage());
+            Log.d(PrincipalActivity.TAG, "ERROR EXISTE USUARIO " + e.getMessage());
         }
 
 
