@@ -1,12 +1,14 @@
 package visitas.solutions.moov.com.visitasmoov;
 
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.omr.solutions.utils.dialogs.DialogFinishListener;
 
-public class VisitasActivity extends ActionBarActivity {
+
+public class VisitasActivity extends ActionBarActivity implements DialogFinishListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,7 +22,7 @@ public class VisitasActivity extends ActionBarActivity {
         getMenuInflater().inflate(R.menu.menu_visitas, menu);
 
         if (menu == null) {
-            
+            return true;
         }
 
 
@@ -38,7 +40,20 @@ public class VisitasActivity extends ActionBarActivity {
         if (id == R.id.action_settings) {
             return true;
         }
+        if (id == R.id.action_dialog_simple) {
+
+
+            return true;
+        }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onFinishDialog(String tagDialog, Object valueDialog) {
+
+
+
+
     }
 }

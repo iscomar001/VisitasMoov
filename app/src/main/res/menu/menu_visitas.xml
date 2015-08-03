@@ -4,4 +4,6 @@
     tools:context="visitas.solutions.moov.com.visitasmoov.VisitasActivity">
     <item android:id="@+id/action_settings" android:title="@string/action_settings"
         android:orderInCategory="100" app:showAsAction="never" />
+    <item android:id="@+id/action_dialog_simple" android:title="@string/action_dialog_simple"
+        android:orderInCategory="100" app:showAsAction="never" />
 </menu>
