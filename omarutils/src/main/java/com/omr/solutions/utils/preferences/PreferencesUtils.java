@@ -1,22 +1,21 @@
 package com.omr.solutions.utils.preferences;
 
-import java.util.Map;
-
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+
+import java.util.Map;
 
 public class PreferencesUtils {
 	
 	public static final int MODE_PRIVATE = Context.MODE_PRIVATE;
 
-	Activity activity;
+	Context context;
 	SharedPreferences preferences = null;
+
 	
-	
-	public PreferencesUtils(Activity activity, String key) {
-		this.activity = activity;
-		this.preferences = activity.getSharedPreferences(key, MODE_PRIVATE);
+	public PreferencesUtils(Context context, String key) {
+		this.context = context;
+		this.preferences = context.getSharedPreferences(key, MODE_PRIVATE);
 	}
 	
 	public void put(String key, Object value){

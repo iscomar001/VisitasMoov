@@ -3,11 +3,13 @@ package visitas.solutions.moov.com.visitasmoov;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.omr.solutions.utils.preferences.PreferencesUtils;
 import com.omr.solutions.utils.task.OnTaskCompleted;
 
 import visitas.solutions.moov.com.visitasmoov.dao.SeguridadTO;
@@ -26,6 +28,8 @@ public class PrincipalActivity extends Activity implements OnTaskCompleted {
     public static final int DB_VERSION = 1;
     public static final String DB_NAME = "visitasmoov.db";
     public static final String PRINCIPAL_USUARIO = "USUARIO";
+    public static final String KEY_USER = "USER";
+    public static final String KEY_PREFERENCES_VISITAS_MOOV = "MoovSolutions";
 
 
     public TextView userText;
@@ -41,6 +45,17 @@ public class PrincipalActivity extends Activity implements OnTaskCompleted {
         userText = (TextView)findViewById(R.id.principal_user_textview);
         btnCambio = (Button)findViewById(R.id.principal_btn_cambio);
         btnLogin = (Button)findViewById(R.id.principal_btn_login);
+
+        PreferencesUtils preferencesUtils = new PreferencesUtils(getApplicationContext(),KEY_PREFERENCES_VISITAS_MOOV);
+        String user = (String) preferencesUtils.getValue(KEY_USER,String.class);
+
+        if (!TextUtils.isEmpty(user)) {
+            Log.d(TAG, "onCreate user preferences: " + user);
+        }else {
+            Log.d(TAG, "onCreate user no preferences");
+        }
+
+
     }
 
     @Override

@@ -4,30 +4,21 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.LoaderManager.LoaderCallbacks;
-import android.content.CursorLoader;
 import android.content.Intent;
-import android.content.Loader;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.omr.solutions.utils.preferences.PreferencesUtils;
 import com.omr.solutions.utils.task.OnTaskCompleted;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import visitas.solutions.moov.com.visitasmoov.tasks.UserLoginTask;
 
@@ -37,6 +28,8 @@ import visitas.solutions.moov.com.visitasmoov.tasks.UserLoginTask;
  */
 public class LoginActivity extends Activity implements OnTaskCompleted {
 
+    private static final String TAG = "LoginActivity";
+    
     public static final String TAG_ORIGEN_LOGIN = "tagOrigenLogin";
 
     // UI references.
@@ -106,7 +99,7 @@ public class LoginActivity extends Activity implements OnTaskCompleted {
         }
 
         // Check for a valid password, if the user entered one.
-        if (isPasswordValid(password)) {
+        if (!isPasswordValid(password)) {
             mPasswordView.setError(getString(R.string.error_invalid_password));
             focusView = mPasswordView;
             cancel = true;
@@ -175,6 +168,11 @@ public class LoginActivity extends Activity implements OnTaskCompleted {
 
 
             if (success) {
+
+                Log.d(TAG, "onTaskCompleted save preferences user: " + mUserView.getText().toString());
+                PreferencesUtils preferencesUtils =  new PreferencesUtils(getApplicationContext(),PrincipalActivity.KEY_PREFERENCES_VISITAS_MOOV);
+                preferencesUtils.put(PrincipalActivity.KEY_USER,mUserView.getText().toString());
+
                 Intent intent =  new Intent(getApplicationContext(),VisitasActivity.class);
 
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

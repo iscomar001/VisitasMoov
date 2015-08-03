@@ -1,21 +1,21 @@
 package com.omr.solutions.utils.files;
 
+import android.content.Context;
+import android.os.Environment;
+import android.util.Log;
+
+import com.omr.solutions.utils.constants.Constantes;
+import com.omr.solutions.utils.date.DateUtils;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import com.omr.solutions.utils.constants.Constantes;
-import com.omr.solutions.utils.date.DateUtils;
-
-import android.content.Context;
-import android.os.Environment;
-import android.util.Log;
-
 public class FileUtils implements Constantes{
 
-	private static final String LOG_TAG = "FileUtils";
+	private static final String TAG = "FileUtils";
 	Context context;
 	File fileDir;
 	
@@ -24,21 +24,30 @@ public class FileUtils implements Constantes{
 		fileDir = context.getFilesDir();
 	}
 	
-	public void createFile(String fileName){
-		//File file = new File(fileDir, fileName);
-		//file.c
+	public long freeSpace(){
+		return  context.getExternalFilesDir(null).getFreeSpace();
 	}
 	
-	public void write(String fileName, String content){
+	public void write(String fileName, String content) throws FileUtilsException{
+
+
 		FileOutputStream outputStream;
 
-		try {
-		  outputStream = context.openFileOutput(fileName, Context.MODE_PRIVATE);
-		  outputStream.write(content.getBytes());
-		  outputStream.close();
-		} catch (Exception e) {
-		  e.printStackTrace();
+		if (isExternalStorageWritable()){
+
+			try {
+				outputStream = context.openFileOutput(fileName, Context.MODE_PRIVATE);
+				outputStream.write(content.getBytes());
+				outputStream.close();
+			} catch (Exception e) {
+				Log.e(TAG, "write " + e.getMessage());
+				throw new FileUtilsException("write " + e.getMessage());
+			}
+		}else {
+			Log.d(TAG, "write storage no writable");
+			throw new FileUtilsException("write storage no writable");
 		}
+
 	}
 	/* Checks if external storage is available for read and write */
 	public boolean isExternalStorageWritable() {
@@ -59,25 +68,28 @@ public class FileUtils implements Constantes{
 	    return false;
 	}
 	
-	public static File getAlbumStorageDir(String albumName) {
+	public static File getPublicAlbumStorageDir(String albumName) throws FileUtilsException {
 	    // Get the directory for the user's public pictures directory. 
 	    File file = new File(Environment.getExternalStoragePublicDirectory(
 	            Environment.DIRECTORY_PICTURES), albumName);
 	    if (!file.mkdirs()) {
-	        Log.e(LOG_TAG, "Directory not created");
+	        Log.e(TAG, "Directory not created");
+			throw new FileUtilsException("Directory not created");
 	    }
 	    return file;
 	}
-	
-    public static File getTempImageFile(String albumName, String catTag){
 
-        File mediaStorageDir = getAlbumStorageDir(albumName);
+
+	
+    public static File getTempImageFile(String albumName, String catTag) throws FileUtilsException{
+
+        File mediaStorageDir = getPublicAlbumStorageDir(albumName);
 
         // Create the storage directory if it does not exist
         if (! mediaStorageDir.exists()){
             if (! mediaStorageDir.mkdirs()){
                 Log.d(catTag, "failed to create directory: " + albumName);
-                return null;
+				return null;
             }
         }
 
@@ -89,9 +101,9 @@ public class FileUtils implements Constantes{
         return mediaFile;
     }
     
-    public static File getTempImageFile(String albumName,String fileName, String catTag){
+    public static File getTempImageFile(String albumName,String fileName, String catTag) throws FileUtilsException{
 
-        File mediaStorageDir = getAlbumStorageDir(albumName);
+        File mediaStorageDir = getPublicAlbumStorageDir(albumName);
 
         // Create the storage directory if it does not exist
         if (! mediaStorageDir.exists()){
@@ -108,14 +120,20 @@ public class FileUtils implements Constantes{
         return mediaFile;
     }
 	
-	public void delete(String fileName){
-		context.deleteFile(fileName);
+	public boolean delete(String fileName) throws FileUtilsException{
+		return new File(fileName).delete();
 	}
-	public void delete(File file){
-		file.delete();
+	public boolean deletePrivate(String fileName) throws FileUtilsException{
+		return context.deleteFile(fileName);
+	}
+	public boolean delete(File file) throws FileUtilsException{
+		return file.delete();
+	}
+	public boolean deletePrivate(File file) throws FileUtilsException{
+		return context.deleteFile(file.getName());
 	}
 	
-	public static void copy(File src, File dst, String tagLog) {
+	public static void copy(File src, File dst, String tagLog) throws FileUtilsException {
 		InputStream in;
 		try {
 			in = new FileInputStream(src);
@@ -130,7 +148,8 @@ public class FileUtils implements Constantes{
 			in.close();
 			out.close();
 		} catch (Exception e) {
-			Log.d(tagLog, "failed to create directory: ");
+			Log.d(tagLog, "copy : " + e.getMessage());
+			throw new FileUtilsException("copy : " + e.getMessage());
 		}
 	}
 }

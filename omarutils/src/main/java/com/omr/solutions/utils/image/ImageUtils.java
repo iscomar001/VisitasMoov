@@ -7,7 +7,15 @@ import android.graphics.BitmapFactory;
 import com.omr.solutions.utils.constants.Constantes;
 
 public class ImageUtils implements Constantes {
-	
+	/**
+	 *Extrae una imagen con con el tamaño de un resource
+	 *  Example
+	 * mImageView.setImageBitmap(decodeSampledBitmapFromFile(/images/image.jpg, 100, 100));
+	 * @param filePath complete path name for the file to be decoded.
+	 * @param reqWidth
+	 * @param reqHeight
+	 * @return
+	 */
 	public static Bitmap decodeSampledBitmapFromFile(String filePath, int reqWidth, int reqHeight) {
 
 	    // First decode with inJustDecodeBounds=true to check dimensions
@@ -22,7 +30,18 @@ public class ImageUtils implements Constantes {
 	    options.inJustDecodeBounds = false;
 	    return BitmapFactory.decodeFile(filePath, options);
 	}
-	
+
+	/**
+	 * Extrae una imagen con con el tamaño de un resource
+	 * Example
+	 * mImageView.setImageBitmap(decodeSampledBitmapFromResource(getResources(), R.id.myimage, 100, 100));
+	 * @param res The resources object containing the image data
+	 * @param resId The resource id of the image data
+	 * @param reqWidth
+	 * @param reqHeight
+	 * @return
+	 */
+
 	public static Bitmap decodeSampledBitmapFromResource(Resources res, int resId, int reqWidth, int reqHeight) {
 
 	    // First decode with inJustDecodeBounds=true to check dimensions
