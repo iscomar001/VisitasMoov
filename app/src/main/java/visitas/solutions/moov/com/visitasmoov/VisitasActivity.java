@@ -10,6 +10,9 @@ import com.omr.solutions.utils.dialogs.DialogFinishListener;
 
 public class VisitasActivity extends ActionBarActivity implements DialogFinishListener {
 
+    public VisitasActivity() {
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

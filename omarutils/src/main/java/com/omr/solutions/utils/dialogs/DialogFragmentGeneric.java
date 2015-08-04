@@ -48,6 +48,7 @@ public class DialogFragmentGeneric extends DialogFragment implements DialogInter
             message = "Click neutral";
         }
 
+
         Toast.makeText(getActivity(),message,Toast.LENGTH_SHORT).show();
 
         dialog.dismiss();

@@ -3,10 +3,10 @@ package visitas.solutions.moov.com.visitasmoov;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.omr.solutions.utils.preferences.PreferencesUtils;
@@ -21,7 +21,7 @@ import visitas.solutions.moov.com.visitasmoov.tasks.ExisteUsuarioTask;
  * status bar and navigation/system bar) with user interaction.
  *
  */
-public class PrincipalActivity extends Activity implements OnTaskCompleted {
+public class PrincipalActivity extends Activity implements OnTaskCompleted, Runnable {
 
     public static final String TAG = PrincipalActivity.class.getSimpleName();
     public static final String TAG_ORIGEN_EXISTE_USUARIO = "ExisteUsuarioTask";
@@ -33,8 +33,7 @@ public class PrincipalActivity extends Activity implements OnTaskCompleted {
 
 
     public TextView userText;
-    public Button btnCambio;
-    public Button btnLogin;
+    private boolean existeUsuario;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,8 +42,6 @@ public class PrincipalActivity extends Activity implements OnTaskCompleted {
         final View contentView = findViewById(R.id.fullscreen_content);
         
         userText = (TextView)findViewById(R.id.principal_user_textview);
-        btnCambio = (Button)findViewById(R.id.principal_btn_cambio);
-        btnLogin = (Button)findViewById(R.id.principal_btn_login);
 
         PreferencesUtils preferencesUtils = new PreferencesUtils(getApplicationContext(),KEY_PREFERENCES_VISITAS_MOOV);
         String user = (String) preferencesUtils.getValue(KEY_USER,String.class);
@@ -63,30 +60,41 @@ public class PrincipalActivity extends Activity implements OnTaskCompleted {
         super.onPostResume();
         Log.d(TAG, "onPostResume: start ExisteUsuario: " + TAG_ORIGEN_EXISTE_USUARIO);
         new ExisteUsuarioTask(getApplicationContext(), this, TAG_ORIGEN_EXISTE_USUARIO).execute();
+
     }
 
 
     @Override
-    public void onTaskCompleted(String tagOrigen,Object object) {
+    public void onTaskCompleted(final String tagOrigen,final Object object) {
 
-        Log.d(TAG, "onTaskCompleted " + tagOrigen);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Log.d(TAG, "onTaskCompleted " + tagOrigen);
 
-        if (tagOrigen.equalsIgnoreCase(TAG_ORIGEN_EXISTE_USUARIO)){
+                if (tagOrigen.equalsIgnoreCase(TAG_ORIGEN_EXISTE_USUARIO)){
 
-            SeguridadTO seguridadTO = (SeguridadTO) object;
+                    SeguridadTO seguridadTO = (SeguridadTO) object;
 
-            btnCambio.setVisibility(View.VISIBLE);
+                    if ( seguridadTO.getId() == -1){
+                        Log.d(TAG, "User No Found");
+                        userText.setText("Bienvenido");
 
-            if ( seguridadTO.getId() == -1){
-                Log.d(TAG, "User No Found");
-                userText.setText(seguridadTO.getUsuario());
-            }else{
-                Log.d(TAG, "User found: " + seguridadTO.getUsuario());
-                userText.setText(seguridadTO.getUsuario());
-                btnCambio.setVisibility(View.VISIBLE);
-                btnLogin.setVisibility(View.VISIBLE);
+                        existeUsuario = false;
+
+                    }else{
+                        Log.d(TAG, "User found: " + seguridadTO.getUsuario());
+                        userText.setText(seguridadTO.getUsuario());
+                        existeUsuario = true;
+                    }
+                }
+
             }
-        }
+        });
+
+        Log.d(TAG, "onTaskCompleted Handlrer");
+        Handler handler = new Handler();
+        handler.postDelayed(this, 4000);
 
     }
 
@@ -95,23 +103,23 @@ public class PrincipalActivity extends Activity implements OnTaskCompleted {
 
     }
 
-    public void btnOnClick(View view) {
-        if (view == btnCambio) {
-            Log.d(TAG, "btnCambioOnClick");
-            Intent intent =  new Intent(getApplicationContext(),LoginActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            intent.putExtra(PrincipalActivity.PRINCIPAL_USUARIO,"ND");
-            getApplicationContext().startActivity(intent);
-        }else {
-            Log.d(TAG, "btnLoginOnClick ");
-            Intent intent =  new Intent(getApplicationContext(),VisitasActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            intent.putExtra(PrincipalActivity.PRINCIPAL_USUARIO,userText.getText().toString());
-            getApplicationContext().startActivity(intent);
+    @Override
+    public void run() {
+
+        Intent intent = null;
+
+        Log.d(TAG, "run ");
+
+        if ( !existeUsuario ){
+            intent =  new Intent(getApplicationContext(),LoginActivity.class);
+            intent.putExtra(PrincipalActivity.PRINCIPAL_USUARIO, "ND");
+        }else{
+            intent =  new Intent(getApplicationContext(),VisitasActivity.class);
+            intent.putExtra(PrincipalActivity.PRINCIPAL_USUARIO, userText.getText().toString());
         }
-
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        getApplicationContext().startActivity(intent);
     }
-
 }
 
 
